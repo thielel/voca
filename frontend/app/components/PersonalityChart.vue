@@ -1,0 +1,355 @@
+<script setup lang="ts">
+  import type { PersonalityResult } from '~/composables/useQuestionnaire'
+
+  const { t } = useI18n()
+
+  const props = defineProps<{
+    result: PersonalityResult
+  }>()
+
+  type ChartType = 'bar' | 'radar'
+  const chartType = ref<ChartType>('bar')
+
+  const traits = computed(() => [
+    {
+      key: 'extraversion',
+      name: t('traits.extraversion'),
+      value: props.result.extraversion,
+      icon: 'i-lucide-zap',
+      color: 'bg-yellow-500',
+      strokeColor: '#eab308',
+      description: t('traitDescriptions.extraversion')
+    },
+    {
+      key: 'agreeableness',
+      name: t('traits.agreeableness'),
+      value: props.result.agreeableness,
+      icon: 'i-lucide-heart-handshake',
+      color: 'bg-green-500',
+      strokeColor: '#22c55e',
+      description: t('traitDescriptions.agreeableness')
+    },
+    {
+      key: 'conscientiousness',
+      name: t('traits.conscientiousness'),
+      value: props.result.conscientiousness,
+      icon: 'i-lucide-target',
+      color: 'bg-blue-500',
+      strokeColor: '#3b82f6',
+      description: t('traitDescriptions.conscientiousness')
+    },
+    {
+      key: 'emotionalStability',
+      name: t('traits.emotionalStability'),
+      value: props.result.emotionalStability,
+      icon: 'i-lucide-anchor',
+      color: 'bg-purple-500',
+      strokeColor: '#a855f7',
+      description: t('traitDescriptions.emotionalStability')
+    },
+    {
+      key: 'openness',
+      name: t('traits.openness'),
+      value: props.result.openness,
+      icon: 'i-lucide-lightbulb',
+      color: 'bg-pink-500',
+      strokeColor: '#ec4899',
+      description: t('traitDescriptions.openness')
+    }
+  ])
+
+  const getLevel = (value: number) => {
+    if (value >= 75) return t('levels.high')
+    if (value >= 50) return t('levels.medium')
+    if (value >= 25) return t('levels.low')
+    return t('levels.veryLow')
+  }
+
+  // Radar chart calculations - responsive sizing
+  const isSmallScreen = ref(false)
+  
+  onMounted(() => {
+    const checkScreenSize = () => {
+      isSmallScreen.value = window.innerWidth < 640
+    }
+    checkScreenSize()
+    window.addEventListener('resize', checkScreenSize)
+    onUnmounted(() => window.removeEventListener('resize', checkScreenSize))
+  })
+  
+  const radarSize = computed(() => isSmallScreen.value ? 320 : 420)
+  const radarCenter = computed(() => radarSize.value / 2)
+  const radarRadius = computed(() => isSmallScreen.value ? 110 : 150)
+  const levels = [25, 50, 75, 100]
+
+  // Calculate point position on the radar for a given index and value (0-100)
+  const getRadarPoint = (index: number, value: number) => {
+    const angleOffset = -Math.PI / 2 // Start from top
+    const angle = angleOffset + (index * 2 * Math.PI) / 5
+    const r = (value / 100) * radarRadius.value
+    return {
+      x: radarCenter.value + r * Math.cos(angle),
+      y: radarCenter.value + r * Math.sin(angle)
+    }
+  }
+
+  // Generate pentagon points for grid levels
+  const getLevelPolygon = (level: number) => {
+    return Array.from({ length: 5 }, (_, i) => {
+      const point = getRadarPoint(i, level)
+      return `${point.x},${point.y}`
+    }).join(' ')
+  }
+
+  // Generate axis lines from center to each vertex
+  const getAxisLine = (index: number) => {
+    const point = getRadarPoint(index, 100)
+    return `M${radarCenter.value},${radarCenter.value} L${point.x},${point.y}`
+  }
+
+  // Generate the data polygon path
+  const dataPolygon = computed(() => {
+    return traits.value
+      .map((trait, i) => {
+        const point = getRadarPoint(i, trait.value)
+        return `${point.x},${point.y}`
+      })
+      .join(' ')
+  })
+
+  // Label positions (slightly outside the radar)
+  const getLabelPosition = (index: number) => {
+    const labelOffset = isSmallScreen.value ? 125 : 130
+    const point = getRadarPoint(index, labelOffset)
+    return { x: point.x, y: point.y }
+  }
+
+  // Tooltip state for hover interactions
+  const hoveredTrait = ref<string | null>(null)
+  const tooltipPosition = ref({ x: 0, y: 0 })
+  const svgRef = ref<SVGSVGElement | null>(null)
+
+  const showTooltip = (trait: typeof traits.value[0], index: number, event: MouseEvent) => {
+    hoveredTrait.value = trait.key
+    if (svgRef.value) {
+      const svgRect = svgRef.value.getBoundingClientRect()
+      const labelPos = getLabelPosition(index)
+      tooltipPosition.value = {
+        x: svgRect.left + labelPos.x,
+        y: svgRect.top + labelPos.y - 10
+      }
+    }
+  }
+
+  const hideTooltip = () => {
+    hoveredTrait.value = null
+  }
+
+  const getHoveredTrait = computed(() => {
+    return traits.value.find(t => t.key === hoveredTrait.value)
+  })
+</script>
+
+<template>
+  <div class="space-y-6">
+    <!-- Chart Type Toggle -->
+    <div class="flex justify-center">
+      <div class="inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1">
+        <button
+          class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          :class="
+            chartType === 'bar'
+              ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+          "
+          @click="chartType = 'bar'"
+        >
+          <UIcon name="i-lucide-bar-chart-3" class="w-4 h-4" />
+          {{ t('chart.bar') }}
+        </button>
+        <button
+          class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          :class="
+            chartType === 'radar'
+              ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+          "
+          @click="chartType = 'radar'"
+        >
+          <UIcon name="i-lucide-radar" class="w-4 h-4" />
+          {{ t('chart.radar') }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Bar Chart View -->
+    <div v-if="chartType === 'bar'" class="space-y-6">
+      <div v-for="trait in traits" :key="trait.key" class="space-y-2">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <UIcon :name="trait.icon" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <span class="font-medium text-gray-900 dark:text-white">
+              {{ trait.name }}
+            </span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-500 dark:text-gray-400">
+              {{ getLevel(trait.value) }}
+            </span>
+            <span class="font-semibold text-gray-900 dark:text-white">
+              {{ trait.value }}%
+            </span>
+          </div>
+        </div>
+
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+          <div
+            class="h-full rounded-full transition-all duration-1000 ease-out"
+            :class="trait.color"
+            :style="{ width: `${trait.value}%` }"
+          />
+        </div>
+
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          {{ trait.description }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Radar Chart View -->
+    <div v-else class="flex flex-col items-center space-y-4 sm:space-y-6 relative">
+      <svg ref="svgRef" :width="radarSize" :height="radarSize" class="overflow-visible max-w-full">
+        <!-- Background grid levels -->
+        <polygon
+          v-for="level in levels"
+          :key="level"
+          :points="getLevelPolygon(level)"
+          fill="none"
+          class="stroke-gray-200 dark:stroke-gray-700"
+          stroke-width="1"
+        />
+
+        <!-- Axis lines -->
+        <path
+          v-for="i in 5"
+          :key="`axis-${i}`"
+          :d="getAxisLine(i - 1)"
+          class="stroke-gray-200 dark:stroke-gray-700"
+          stroke-width="1"
+        />
+
+        <!-- Data polygon with gradient fill -->
+        <defs>
+          <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color: #3b82f6; stop-opacity: 0.6" />
+            <stop offset="50%" style="stop-color: #a855f7; stop-opacity: 0.6" />
+            <stop offset="100%" style="stop-color: #ec4899; stop-opacity: 0.6" />
+          </linearGradient>
+        </defs>
+        <polygon
+          :points="dataPolygon"
+          fill="url(#radarGradient)"
+          class="stroke-indigo-500 dark:stroke-indigo-400"
+          stroke-width="2"
+          stroke-linejoin="round"
+        />
+
+        <!-- Data points -->
+        <circle
+          v-for="(trait, i) in traits"
+          :key="`point-${trait.key}`"
+          :cx="getRadarPoint(i, trait.value).x"
+          :cy="getRadarPoint(i, trait.value).y"
+          :r="isSmallScreen ? 6 : 7"
+          :fill="trait.strokeColor"
+          class="stroke-white dark:stroke-gray-900"
+          stroke-width="2"
+        />
+
+        <!-- Labels with hover interaction -->
+        <g
+          v-for="(trait, i) in traits"
+          :key="`label-${trait.key}`"
+          class="cursor-pointer"
+          @mouseenter="showTooltip(trait, i, $event)"
+          @mouseleave="hideTooltip"
+        >
+          <!-- Invisible hit area for easier hovering -->
+          <rect
+            :x="getLabelPosition(i).x - 50"
+            :y="getLabelPosition(i).y - 12"
+            width="100"
+            :height="isSmallScreen ? 32 : 40"
+            fill="transparent"
+          />
+          <text
+            :x="getLabelPosition(i).x"
+            :y="getLabelPosition(i).y"
+            text-anchor="middle"
+            dominant-baseline="middle"
+            :class="[
+              isSmallScreen ? 'text-xs' : 'text-sm',
+              hoveredTrait === trait.key ? 'fill-indigo-600 dark:fill-indigo-400' : 'fill-gray-700 dark:fill-gray-300'
+            ]"
+            class="font-medium transition-colors"
+          >
+            {{ trait.name }}
+          </text>
+          <text
+            :x="getLabelPosition(i).x"
+            :y="getLabelPosition(i).y + (isSmallScreen ? 14 : 18)"
+            text-anchor="middle"
+            dominant-baseline="middle"
+            :class="[
+              isSmallScreen ? 'text-xs' : 'text-sm',
+              hoveredTrait === trait.key ? 'fill-indigo-700 dark:fill-indigo-300' : 'fill-gray-900 dark:fill-white'
+            ]"
+            class="font-semibold transition-colors"
+          >
+            {{ trait.value }}%
+          </text>
+        </g>
+      </svg>
+
+      <!-- Tooltip -->
+      <Teleport to="body">
+        <Transition
+          enter-active-class="transition duration-150 ease-out"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition duration-100 ease-in"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-95"
+        >
+          <div
+            v-if="hoveredTrait && getHoveredTrait"
+            class="fixed z-50 max-w-xs px-3 py-2 text-sm bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 pointer-events-none"
+            :style="{
+              left: `${tooltipPosition.x}px`,
+              top: `${tooltipPosition.y}px`,
+              transform: 'translate(-50%, -100%)'
+            }"
+          >
+            <div class="flex items-center gap-2 mb-1">
+              <div
+                class="w-2 h-2 rounded-full shrink-0"
+                :style="{ backgroundColor: getHoveredTrait.strokeColor }"
+              />
+              <span class="font-medium text-gray-900 dark:text-white">
+                {{ getHoveredTrait.name }}
+              </span>
+              <span class="text-xs text-gray-500 dark:text-gray-400">
+                {{ getLevel(getHoveredTrait.value) }}
+              </span>
+            </div>
+            <p class="text-xs text-gray-600 dark:text-gray-300 leading-relaxed">
+              {{ getHoveredTrait.description }}
+            </p>
+            <!-- Tooltip arrow -->
+            <div class="absolute left-1/2 -bottom-1.5 -translate-x-1/2 w-3 h-3 rotate-45 bg-white dark:bg-gray-800 border-r border-b border-gray-200 dark:border-gray-700" />
+          </div>
+        </Transition>
+      </Teleport>
+    </div>
+  </div>
+</template>
