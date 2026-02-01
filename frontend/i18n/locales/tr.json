@@ -46,11 +46,11 @@
     "levelLow": "Low"
   },
   "home": {
-    "title": "Kişiliğini Keşfet",
-    "description": "IPIP-50 kişilik değerlendirmesini yap – beş temel boyutta benzersiz özelliklerini ölçmek için tasarlanmış bilimsel olarak doğrulanmış bir araç.",
-    "startButton": "Kişilik Testini Başlat",
+    "title": "Kişilik Tipin Ne?",
+    "description": "50 hızlı soruyu yanıtla ve seni benzersiz kılan şeyi öğren. Bu test kişiliğinin beş önemli yönünü ölçer.",
+    "startButton": "Teste Başla",
     "traitsTitle": "Beş Büyük Kişilik Özelliği",
-    "traitsSubtitle": "Kişiliğin bu beş temel boyutunda nasıl puanladığını keşfet – her biri kim olduğunun benzersiz bir yönünü yakalar.",
+    "traitsSubtitle": "Kim olduğunu belirleyen bu beş özellikte nasıl olduğunu öğren.",
     "scientificFoundation": "Bilimsel Temel",
     "ipipTitle": "IPIP Üzerine İnşa Edildi",
     "ipipDescription1": "Uluslararası Kişilik Madde Havuzu (IPIP), psikoloji alanındaki önde gelen araştırmacılar tarafından geliştirilen, kamuya açık bir kişilik değerlendirme maddesi koleksiyonudur. Değerlendirmemiz, Beş Büyük kişilik özelliklerini ölçen doğrulanmış 50 maddelik bir ölçek olan IPIP-50'yi kullanır.",
@@ -69,25 +69,25 @@
     "openness": "Açıklık"
   },
   "traitDescriptions": {
-    "extraversion": "Sosyal durumlarda ne kadar girişken, enerjik ve konuşkan olduğun.",
-    "agreeableness": "Başkalarına karşı ne kadar işbirlikçi, güvenilir ve yardımsever olduğun.",
-    "conscientiousness": "Ne kadar düzenli, güvenilir ve hedef odaklı olduğun.",
-    "emotionalStability": "Stres altında ne kadar sakin ve dayanıklı olduğun.",
-    "openness": "Yeni deneyimlere ne kadar meraklı, yaratıcı ve açık olduğun."
+    "extraversion": "Başkalarıyla ne kadar sosyal ve açık olduğun.",
+    "agreeableness": "Ne kadar arkadaş canlısı, nazik ve yardımsever olduğun.",
+    "conscientiousness": "Ne kadar düzenli ve sorumluluk sahibi olduğun.",
+    "emotionalStability": "İşler stresli olduğunda ne kadar sakin kaldığın.",
+    "openness": "Ne kadar yaratıcı ve yeni fikirlere açık olduğun."
   },
   "questionnaire": {
     "question": "Soru {current} / {total}",
-    "completed": "%{percent} tamamlandı",
+    "completed": "%{percent} bitti",
     "back": "Geri",
     "cancel": "İptal",
-    "selectOption": "Seni en iyi tanımlayan seçeneği seç"
+    "selectOption": "Sana en çok uyanı seç"
   },
   "likert": {
-    "1": "Hiç uygun değil",
-    "2": "Pek uygun değil",
-    "3": "Ne uygun ne değil",
-    "4": "Oldukça uygun",
-    "5": "Tamamen uygun"
+    "1": "Hiç ben değil",
+    "2": "Pek ben değil",
+    "3": "Bazen",
+    "4": "Genelde ben",
+    "5": "Tam ben"
   },
   "results": {
     "title": "Kişilik Profilin",

@@ -1,8 +1,9 @@
-import { questions, traits, type Question, type Answer, type PersonalityResult } from '~/data/questions'
+import { questions, type Question, type Answer, type PersonalityResult } from '~/data/questions'
 
 export type { Question, Answer, PersonalityResult }
 
 export const useQuestionnaire = () => {
+  const config = useRuntimeConfig()
   const currentQuestionIndex = useState<number>('currentQuestionIndex', () => 0)
   const answers = useState<Answer[]>('answers', () => [])
   const result = useState<PersonalityResult | null>('result', () => null)
@@ -44,52 +45,50 @@ export const useQuestionnaire = () => {
     return answer?.value
   }
 
-  const calculateResults = async (): Promise<PersonalityResult & { id: string }> => {
+  const calculateResults = async (language?: string): Promise<PersonalityResult & { id: string }> => {
     isLoading.value = true
 
     try {
-      const scores: Record<string, number> = {}
+      // Generate a session ID for this submission
+      const sessionId = crypto.randomUUID()
 
-      for (const trait of traits) {
-        const traitQuestions = questions.filter(q => q.trait === trait)
-        let total = 0
+      // Convert answers to backend format (question_id instead of questionId)
+      const backendAnswers = answers.value.map(a => ({
+        question_id: a.questionId,
+        value: a.value,
+      }))
 
-        for (const question of traitQuestions) {
-          const answer = answers.value.find(a => a.questionId === question.id)
-          if (answer) {
-            // Reverse score for reversed questions
-            const score = question.reversed ? (6 - answer.value) : answer.value
-            total += score
-          }
+      // Submit answers to backend - backend calculates scores and starts AI generation in background
+      const response = await $fetch<{
+        result: {
+          id: string
+          extraversion: number
+          agreeableness: number
+          conscientiousness: number
+          emotional_stability: number
+          openness: number
         }
-
-        // Calculate average and normalize to 0-100 scale
-        const average = total / traitQuestions.length
-        scores[trait] = Math.round(((average - 1) / 4) * 100)
-      }
-
-      const personalityResult: PersonalityResult = {
-        extraversion: scores.extraversion ?? 0,
-        agreeableness: scores.agreeableness ?? 0,
-        conscientiousness: scores.conscientiousness ?? 0,
-        emotionalStability: scores.emotionalStability ?? 0,
-        openness: scores.openness ?? 0,
-      }
-
-      // Save to backend API
-      const response = await $fetch<{ id: string }>('http://localhost:8080/api/results', {
+      }>(`${config.public.apiUrl}/api/results`, {
         method: 'POST',
         body: {
-          extraversion: personalityResult.extraversion,
-          agreeableness: personalityResult.agreeableness,
-          conscientiousness: personalityResult.conscientiousness,
-          emotional_stability: personalityResult.emotionalStability,
-          openness: personalityResult.openness,
+          session_id: sessionId,
+          answers: backendAnswers,
+          language: language || 'de', // Pass language for background AI generation
         },
       })
 
-      result.value = { ...personalityResult, id: response.id }
-      return { ...personalityResult, id: response.id }
+      // Convert backend response to frontend format
+      const personalityResult: PersonalityResult & { id: string } = {
+        id: response.result.id,
+        extraversion: response.result.extraversion,
+        agreeableness: response.result.agreeableness,
+        conscientiousness: response.result.conscientiousness,
+        emotionalStability: response.result.emotional_stability,
+        openness: response.result.openness,
+      }
+
+      result.value = personalityResult
+      return personalityResult
     } finally {
       isLoading.value = false
     }

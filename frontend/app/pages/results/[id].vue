@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PersonalityResult } from '~/data/questions'
 
+const config = useRuntimeConfig()
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const router = useRouter()
@@ -34,17 +35,40 @@ const result = ref<PersonalityResult | null>(null)
 const interpretations = ref<Record<string, string>>({})
 const isLoading = ref(true)
 const isRegenerating = ref(false)
+const isPolling = ref(false)
 const error = ref<string | null>(null)
+
+// Polling state
+let pollInterval: ReturnType<typeof setInterval> | null = null
+const POLL_INTERVAL_MS = 2000 // Poll every 2 seconds
+const MAX_POLL_TIME_MS = 30000 // Stop polling after 30 seconds (show Generate button if backend fails)
+let pollStartTime = 0
 
 const hasInterpretations = computed(() => Object.keys(interpretations.value).length > 0)
 
-const fetchResult = async () => {
-  isLoading.value = true
+// Helper to update interpretations from API response
+const updateInterpretationsFromData = (data: ApiResultResponse) => {
+  if (data.interpretations && Object.keys(data.interpretations).length > 0) {
+    const mapped: Record<string, string> = {}
+    for (const [key, value] of Object.entries(data.interpretations)) {
+      const mappedKey = traitKeyMap[key] || key
+      mapped[mappedKey] = value
+    }
+    interpretations.value = mapped
+    return true
+  }
+  return false
+}
+
+const fetchResult = async (showLoadingState = true) => {
+  if (showLoadingState) {
+    isLoading.value = true
+  }
   error.value = null
 
   try {
     const id = route.params.id as string
-    const data = await $fetch<ApiResultResponse>(`http://localhost:8080/api/results/${id}`)
+    const data = await $fetch<ApiResultResponse>(`${config.public.apiUrl}/api/results/${id}`)
 
     // Convert snake_case to camelCase for PersonalityChart compatibility
     result.value = {
@@ -58,48 +82,72 @@ const fetchResult = async () => {
     }
 
     // Map interpretations from API (snake_case) to frontend (camelCase)
-    if (data.interpretations) {
-      const mapped: Record<string, string> = {}
-      for (const [key, value] of Object.entries(data.interpretations)) {
-        const mappedKey = traitKeyMap[key] || key
-        mapped[mappedKey] = value
-      }
-      interpretations.value = mapped
-    } else {
+    const hasInterps = updateInterpretationsFromData(data)
+    if (!hasInterps) {
       interpretations.value = {}
     }
+    
+    return hasInterps
   } catch (e) {
     error.value = t('results.failedToLoad')
     console.error('Failed to fetch result:', e)
+    return false
   } finally {
-    isLoading.value = false
+    if (showLoadingState) {
+      isLoading.value = false
+    }
   }
+}
+
+// Poll for interpretations (backend generates them in background)
+const startPollingForInterpretations = () => {
+  if (pollInterval) return // Already polling
+  
+  isPolling.value = true
+  pollStartTime = Date.now()
+  
+  pollInterval = setInterval(async () => {
+    // Check if we've exceeded max poll time
+    if (Date.now() - pollStartTime > MAX_POLL_TIME_MS) {
+      stopPolling()
+      return
+    }
+    
+    // Fetch result without showing loading state
+    const hasInterps = await fetchResult(false)
+    if (hasInterps) {
+      stopPolling()
+    }
+  }, POLL_INTERVAL_MS)
+}
+
+const stopPolling = () => {
+  if (pollInterval) {
+    clearInterval(pollInterval)
+    pollInterval = null
+  }
+  isPolling.value = false
 }
 
 const regenerateInterpretations = async () => {
   if (!result.value?.id) return
 
+  // Stop any existing polling
+  stopPolling()
+  
   isRegenerating.value = true
   error.value = null
 
   try {
     const data = await $fetch<ApiResultResponse>(
-      `http://localhost:8080/api/results/${result.value.id}/regenerate`,
+      `${config.public.apiUrl}/api/results/${result.value.id}/regenerate`,
       {
         method: 'POST',
         body: { language: locale.value }
       }
     )
 
-    // Map interpretations from API (snake_case) to frontend (camelCase)
-    if (data.interpretations) {
-      const mapped: Record<string, string> = {}
-      for (const [key, value] of Object.entries(data.interpretations)) {
-        const mappedKey = traitKeyMap[key] || key
-        mapped[mappedKey] = value
-      }
-      interpretations.value = mapped
-    }
+    updateInterpretationsFromData(data)
   } catch (e) {
     error.value = t('results.failedToGenerateInterpretations')
     console.error('Failed to regenerate interpretations:', e)
@@ -108,8 +156,18 @@ const regenerateInterpretations = async () => {
   }
 }
 
-onMounted(() => {
-  fetchResult()
+onMounted(async () => {
+  const hasInterps = await fetchResult()
+  
+  // If no interpretations, start polling (backend is generating them in background)
+  if (!hasInterps && result.value) {
+    startPollingForInterpretations()
+  }
+})
+
+// Clean up polling on unmount
+onUnmounted(() => {
+  stopPolling()
 })
 
 const startOver = () => {
@@ -257,22 +315,23 @@ const formatInterpretation = (text: string | null): string => {
                 {{ t('results.detailedAnalysis') }}
               </h2>
               <UButton
+                v-if="hasInterpretations"
                 :loading="isRegenerating"
-                :disabled="isRegenerating"
+                :disabled="isRegenerating || isPolling"
                 icon="i-lucide-sparkles"
                 variant="outline"
                 size="sm"
                 class="self-start sm:self-auto"
                 @click="regenerateInterpretations"
               >
-                <span class="hidden sm:inline">{{ hasInterpretations ? t('results.regenerate') : t('results.generateAiInterpretation') }}</span>
-                <span class="sm:hidden">{{ hasInterpretations ? t('results.regenerate') : t('results.generate') }}</span>
+                <span class="hidden sm:inline">{{ t('results.regenerate') }}</span>
+                <span class="sm:hidden">{{ t('results.regenerate') }}</span>
               </UButton>
             </div>
           </template>
 
-          <!-- Regenerating Indicator -->
-          <div v-if="isRegenerating" class="py-12">
+          <!-- Generating/Polling Indicator -->
+          <div v-if="isRegenerating || isPolling" class="py-12">
             <div class="flex flex-col items-center justify-center gap-4">
               <UIcon name="i-lucide-loader-2" class="w-10 h-10 animate-spin text-primary-500" />
               <div class="text-center">
@@ -287,7 +346,7 @@ const formatInterpretation = (text: string | null): string => {
             </div>
           </div>
 
-          <!-- No Interpretations State -->
+          <!-- No Interpretations State (only shown if polling timed out) -->
           <div v-else-if="!hasInterpretations" class="py-8">
             <div class="flex flex-col items-center justify-center gap-4 text-center">
               <UIcon name="i-lucide-file-question" class="w-12 h-12 text-gray-400" />

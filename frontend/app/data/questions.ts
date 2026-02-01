@@ -36,19 +36,19 @@ export interface PersonalityResult {
 }
 
 /**
- * Likert scale options (German)
- * 1: Trifft überhaupt nicht zu (Very Inaccurate)
- * 2: Trifft eher nicht zu (Moderately Inaccurate)
- * 3: Weder zutreffend noch unzutreffend (Neither Accurate Nor Inaccurate)
- * 4: Trifft eher zu (Moderately Accurate)
- * 5: Trifft voll und ganz zu (Very Accurate)
+ * Likert scale options (German - simplified for teens)
+ * 1: Gar nicht ich (Not me at all)
+ * 2: Eher nicht ich (Not really me)
+ * 3: Manchmal (Sometimes)
+ * 4: Meistens ich (Mostly me)
+ * 5: Total ich (Totally me)
  */
 export const likertOptions = [
-  { value: 1, label: 'Trifft überhaupt nicht zu' },
-  { value: 2, label: 'Trifft eher nicht zu' },
-  { value: 3, label: 'Weder zutreffend noch unzutreffend' },
-  { value: 4, label: 'Trifft eher zu' },
-  { value: 5, label: 'Trifft voll und ganz zu' },
+  { value: 1, label: 'Gar nicht ich' },
+  { value: 2, label: 'Eher nicht ich' },
+  { value: 3, label: 'Manchmal' },
+  { value: 4, label: 'Meistens ich' },
+  { value: 5, label: 'Total ich' },
 ] as const
 
 /**

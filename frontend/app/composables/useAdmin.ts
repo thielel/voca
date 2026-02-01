@@ -10,6 +10,7 @@ export interface AdminResult {
 }
 
 export const useAdmin = () => {
+  const config = useRuntimeConfig()
   const results = ref<AdminResult[]>([])
   const isLoading = ref(false)
   const error = ref<string | null>(null)
@@ -19,7 +20,7 @@ export const useAdmin = () => {
     error.value = null
 
     try {
-      const data = await $fetch<AdminResult[]>('http://localhost:8080/api/admin/results')
+      const data = await $fetch<AdminResult[]>(`${config.public.apiUrl}/api/admin/results`)
       results.value = data || []
     } catch (e) {
       error.value = 'Fehler beim Laden der Ergebnisse'

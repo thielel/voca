@@ -46,11 +46,11 @@
     "levelLow": "Scăzut"
   },
   "home": {
-    "title": "Descoperă-ți personalitatea",
-    "description": "Fă evaluarea personalității IPIP-50 – un instrument validat științific conceput să măsoare trăsăturile tale unice în cinci dimensiuni cheie.",
-    "startButton": "Începe testul de personalitate",
+    "title": "Ce tip de personalitate ai?",
+    "description": "Răspunde la 50 de întrebări rapide pentru a descoperi ce te face unic. Acest quiz măsoară cinci aspecte cheie ale personalității tale.",
+    "startButton": "Începe quiz-ul",
     "traitsTitle": "Cele cinci trăsături mari de personalitate",
-    "traitsSubtitle": "Descoperă cum te situezi în aceste cinci dimensiuni fundamentale ale personalității – fiecare surprinde un aspect unic al cine ești.",
+    "traitsSubtitle": "Descoperă cum te situezi în aceste cinci trăsături care definesc cine ești.",
     "scientificFoundation": "Fundament științific",
     "ipipTitle": "Construit pe IPIP",
     "ipipDescription1": "International Personality Item Pool (IPIP) este o colecție de domeniu public de itemi pentru evaluarea personalității, dezvoltată de cercetători de top în psihologie. Evaluarea noastră folosește IPIP-50, o scală validată de 50 de itemi care măsoară trăsăturile Big Five.",
@@ -69,25 +69,25 @@
     "openness": "Deschidere"
   },
   "traitDescriptions": {
-    "extraversion": "Cât de sociabil, energic și vorbăreț ești în situații sociale.",
-    "agreeableness": "Cât de cooperant, de încredere și de ajutor ești față de alții.",
-    "conscientiousness": "Cât de organizat, de încredere și orientat spre obiective ești.",
-    "emotionalStability": "Cât de calm și rezistent ești sub stres.",
-    "openness": "Cât de curios, creativ și deschis la experiențe noi ești."
+    "extraversion": "Cât de sociabil și deschis ești cu ceilalți.",
+    "agreeableness": "Cât de prietenos, drăguț și de ajutor ești.",
+    "conscientiousness": "Cât de organizat și responsabil ești.",
+    "emotionalStability": "Cât de calm rămâi când lucrurile devin stresante.",
+    "openness": "Cât de creativ și deschis la idei noi ești."
   },
   "questionnaire": {
     "question": "Întrebarea {current} din {total}",
-    "completed": "{percent}% completat",
+    "completed": "{percent}% gata",
     "back": "Înapoi",
     "cancel": "Anulează",
-    "selectOption": "Alege opțiunea care te descrie cel mai bine"
+    "selectOption": "Alege ce ți se potrivește cel mai bine"
   },
   "likert": {
-    "1": "Foarte inexact",
-    "2": "Destul de inexact",
-    "3": "Nici exact, nici inexact",
-    "4": "Destul de exact",
-    "5": "Foarte exact"
+    "1": "Deloc eu",
+    "2": "Nu prea eu",
+    "3": "Uneori",
+    "4": "De obicei eu",
+    "5": "Fix eu"
   },
   "results": {
     "title": "Profilul tău de personalitate",

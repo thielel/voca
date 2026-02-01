@@ -42,7 +42,7 @@ func (h *QuestionnaireHandler) SubmitAnswers(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	result, err := h.service.CalculateResults(req.SessionID, req.Answers)
+	result, err := h.service.CalculateResults(req.SessionID, req.Answers, req.Language)
 	if err != nil {
 		writeError(w, http.StatusInternalServerError, "Failed to calculate results")
 		return

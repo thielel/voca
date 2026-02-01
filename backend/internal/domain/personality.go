@@ -71,6 +71,7 @@ func (t Trait) DisplayName() string {
 type SubmitAnswersRequest struct {
 	SessionID string   `json:"session_id"`
 	Answers   []Answer `json:"answers"`
+	Language  string   `json:"language,omitempty"` // Optional: language for AI interpretations (defaults to "de")
 }
 
 // SubmitAnswersResponse is the response after calculating results

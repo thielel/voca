@@ -2,8 +2,19 @@
 export default defineNuxtConfig({
   modules: ['@nuxt/eslint', '@nuxt/ui', '@nuxtjs/i18n'],
 
+  // Static site generation for Firebase Hosting
+  ssr: false,
+
   devtools: {
     enabled: true
+  },
+
+  app: {
+    head: {
+      link: [
+        { rel: 'icon', type: 'image/png', href: '/favicon.png' }
+      ]
+    }
   },
 
   css: ['~/assets/css/main.css'],
@@ -11,6 +22,13 @@ export default defineNuxtConfig({
   // Default to light mode for friendly, youth-oriented design
   colorMode: {
     preference: 'light'
+  },
+
+  // Runtime config for API URL
+  runtimeConfig: {
+    public: {
+      apiUrl: process.env.NUXT_PUBLIC_API_URL || 'http://localhost:8080'
+    }
   },
 
   routeRules: {

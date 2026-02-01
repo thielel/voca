@@ -46,11 +46,11 @@
     "levelLow": "Niski"
   },
   "home": {
-    "title": "Odkryj swoją osobowość",
-    "description": "Wykonaj ocenę osobowości IPIP-50 – naukowo zwalidowane narzędzie zaprojektowane do pomiaru Twoich unikalnych cech w pięciu kluczowych wymiarach.",
-    "startButton": "Rozpocznij test osobowości",
+    "title": "Jaki jest Twój typ osobowości?",
+    "description": "Odpowiedz na 50 szybkich pytań, żeby dowiedzieć się, co Cię wyróżnia. Ten quiz mierzy pięć kluczowych cech Twojej osobowości.",
+    "startButton": "Zacznij quiz",
     "traitsTitle": "Pięć cech osobowości",
-    "traitsSubtitle": "Odkryj, jak wypadasz w tych pięciu fundamentalnych wymiarach osobowości – każdy odzwierciedla unikalny aspekt tego, kim jesteś.",
+    "traitsSubtitle": "Sprawdź, jak wypadasz w tych pięciu cechach, które określają, kim jesteś.",
     "scientificFoundation": "Podstawa naukowa",
     "ipipTitle": "Zbudowane na IPIP",
     "ipipDescription1": "Międzynarodowa Pula Pozycji Osobowości (IPIP) to publicznie dostępna kolekcja pozycji do oceny osobowości, opracowana przez wiodących badaczy psychologii. Nasza ocena wykorzystuje IPIP-50, zwalidowaną 50-pozycyjną skalę mierzącą cechy Wielkiej Piątki.",
@@ -69,25 +69,25 @@
     "openness": "Otwartość"
   },
   "traitDescriptions": {
-    "extraversion": "Jak bardzo jesteś towarzyski, energiczny i rozmowny w sytuacjach społecznych.",
-    "agreeableness": "Jak bardzo jesteś skłonny do współpracy, ufny i pomocny wobec innych.",
-    "conscientiousness": "Jak bardzo jesteś zorganizowany, niezawodny i zorientowany na cel.",
-    "emotionalStability": "Jak bardzo jesteś spokojny i odporny na stres.",
-    "openness": "Jak bardzo jesteś ciekawy, kreatywny i otwarty na nowe doświadczenia."
+    "extraversion": "Jak bardzo jesteś towarzyski i otwarty wobec innych.",
+    "agreeableness": "Jak bardzo jesteś przyjacielski, miły i pomocny.",
+    "conscientiousness": "Jak bardzo jesteś zorganizowany i odpowiedzialny.",
+    "emotionalStability": "Jak spokojny zostajesz, gdy robi się stresowo.",
+    "openness": "Jak bardzo jesteś kreatywny i otwarty na nowe pomysły."
   },
   "questionnaire": {
     "question": "Pytanie {current} z {total}",
-    "completed": "{percent}% ukończone",
+    "completed": "{percent}% zrobione",
     "back": "Wstecz",
     "cancel": "Anuluj",
-    "selectOption": "Wybierz opcję, która najlepiej Cię opisuje"
+    "selectOption": "Wybierz to, co najbardziej do Ciebie pasuje"
   },
   "likert": {
-    "1": "Zupełnie nieprawdziwe",
-    "2": "Raczej nieprawdziwe",
-    "3": "Ani prawdziwe, ani nieprawdziwe",
-    "4": "Raczej prawdziwe",
-    "5": "Całkowicie prawdziwe"
+    "1": "W ogóle nie ja",
+    "2": "Raczej nie ja",
+    "3": "Czasami",
+    "4": "Zazwyczaj ja",
+    "5": "To w pełni ja"
   },
   "results": {
     "title": "Twój profil osobowości",

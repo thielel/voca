@@ -219,3 +219,14 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,macos,windows,linux,jetbrains+all,dotenv,vue,go
+
+### Firebase ###
+.firebase/
+firebase-debug.log
+firebase-debug.*.log
+
+### SQLite ###
+*.db
+*.db-journal
+*.db-shm
+*.db-wal

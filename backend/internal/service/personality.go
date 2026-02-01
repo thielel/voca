@@ -32,7 +32,8 @@ func (s *PersonalityService) GetQuestions() []domain.Question {
 }
 
 // CalculateResults processes answers and calculates personality scores
-func (s *PersonalityService) CalculateResults(sessionID string, answers []domain.Answer) (*domain.PersonalityResult, error) {
+// Interpretations are generated in the background and won't be included in the returned result
+func (s *PersonalityService) CalculateResults(sessionID string, answers []domain.Answer, language string) (*domain.PersonalityResult, error) {
 	questions := domain.GetQuestions()
 	questionMap := make(map[int]domain.Question)
 	for _, q := range questions {
@@ -87,28 +88,57 @@ func (s *PersonalityService) CalculateResults(sessionID string, answers []domain
 		}
 	}
 
-	// Generate AI interpretations (default to German for initial generation)
+	// Default language to German if not specified
+	if language == "" {
+		language = "de"
+	}
+
+	// Generate AI interpretations in the background (non-blocking)
 	if s.openaiSvc != nil && s.repo != nil {
-		ctx := context.Background()
-		interpretations, err := s.openaiSvc.GenerateAllInterpretations(ctx, result, "de")
-		if err != nil {
-			// Log error but don't fail the request - interpretations are optional
-			log.Printf("Warning: Failed to generate interpretations: %v", err)
-		} else {
-			// Save interpretations to database
-			if err := s.repo.SaveInterpretations(interpretations); err != nil {
-				log.Printf("Warning: Failed to save interpretations: %v", err)
-			} else {
-				// Add interpretations to result
-				result.Interpretations = make(map[domain.Trait]string)
-				for _, interp := range interpretations {
-					result.Interpretations[interp.Trait] = interp.Interpretation
-				}
-			}
-		}
+		go s.generateInterpretationsInBackground(result.ID, result, language)
 	}
 
 	return result, nil
+}
+
+// Background generation timeout (should be longer than individual call timeouts * retries)
+const backgroundGenerationTimeout = 5 * time.Minute
+
+// generateInterpretationsInBackground generates and saves AI interpretations asynchronously
+func (s *PersonalityService) generateInterpretationsInBackground(resultID string, result *domain.PersonalityResult, language string) {
+	// Panic recovery - don't let a panic crash the background goroutine
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("PANIC in background interpretation generation for result %s: %v", resultID, r)
+		}
+	}()
+
+	startTime := time.Now()
+	log.Printf("Starting background interpretation generation for result %s (language: %s)", resultID, language)
+
+	// Create a context with timeout for the entire operation
+	ctx, cancel := context.WithTimeout(context.Background(), backgroundGenerationTimeout)
+	defer cancel()
+
+	interpretations, err := s.openaiSvc.GenerateAllInterpretations(ctx, result, language)
+	if err != nil {
+		log.Printf("Warning: Failed to generate interpretations for result %s: %v (elapsed: %v)", resultID, err, time.Since(startTime))
+		return
+	}
+
+	// Check if we got any interpretations
+	if len(interpretations) == 0 {
+		log.Printf("Warning: No interpretations generated for result %s (elapsed: %v)", resultID, time.Since(startTime))
+		return
+	}
+
+	// Save interpretations to database
+	if err := s.repo.SaveInterpretations(interpretations); err != nil {
+		log.Printf("Warning: Failed to save interpretations for result %s: %v (elapsed: %v)", resultID, err, time.Since(startTime))
+		return
+	}
+
+	log.Printf("Successfully generated and saved %d interpretations for result %s (elapsed: %v)", len(interpretations), resultID, time.Since(startTime))
 }
 
 // GetResult retrieves a personality result by ID (including interpretations)

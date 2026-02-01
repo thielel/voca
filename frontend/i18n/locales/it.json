@@ -46,11 +46,11 @@
     "levelLow": "Basso"
   },
   "home": {
-    "title": "Scopri la tua personalità",
-    "description": "Fai la valutazione della personalità IPIP-50 – uno strumento scientificamente validato progettato per misurare i tuoi tratti unici in cinque dimensioni chiave.",
-    "startButton": "Inizia il test della personalità",
+    "title": "Che tipo di personalità hai?",
+    "description": "Rispondi a 50 domande veloci per scoprire cosa ti rende unico. Questo quiz misura cinque aspetti chiave della tua personalità.",
+    "startButton": "Inizia il quiz",
     "traitsTitle": "I cinque grandi tratti della personalità",
-    "traitsSubtitle": "Scopri come ti posizioni in queste cinque dimensioni fondamentali della personalità – ognuna cattura un aspetto unico di chi sei.",
+    "traitsSubtitle": "Scopri come ti posizioni in questi cinque tratti che definiscono chi sei.",
     "scientificFoundation": "Fondamento scientifico",
     "ipipTitle": "Costruito su IPIP",
     "ipipDescription1": "L'International Personality Item Pool (IPIP) è una collezione di dominio pubblico di item per la valutazione della personalità, sviluppata da ricercatori leader in psicologia. La nostra valutazione utilizza l'IPIP-50, una scala validata di 50 item che misura i tratti dei Big Five.",
@@ -69,25 +69,25 @@
     "openness": "Apertura"
   },
   "traitDescriptions": {
-    "extraversion": "Quanto sei socievole, energico e loquace nelle situazioni sociali.",
-    "agreeableness": "Quanto sei collaborativo, fiducioso e disponibile verso gli altri.",
-    "conscientiousness": "Quanto sei organizzato, affidabile e orientato agli obiettivi.",
-    "emotionalStability": "Quanto sei calmo e resiliente sotto stress.",
-    "openness": "Quanto sei curioso, creativo e aperto a nuove esperienze."
+    "extraversion": "Quanto sei socievole e aperto con gli altri.",
+    "agreeableness": "Quanto sei amichevole, gentile e disponibile.",
+    "conscientiousness": "Quanto sei organizzato e responsabile.",
+    "emotionalStability": "Quanto resti calmo quando le cose si fanno stressanti.",
+    "openness": "Quanto sei creativo e aperto a nuove idee."
   },
   "questionnaire": {
     "question": "Domanda {current} di {total}",
-    "completed": "{percent}% completato",
+    "completed": "{percent}% fatto",
     "back": "Indietro",
     "cancel": "Annulla",
-    "selectOption": "Scegli l'opzione che ti descrive meglio"
+    "selectOption": "Scegli quella che ti somiglia di più"
   },
   "likert": {
-    "1": "Molto inesatto",
-    "2": "Abbastanza inesatto",
-    "3": "Né esatto né inesatto",
-    "4": "Abbastanza esatto",
-    "5": "Molto esatto"
+    "1": "Non sono io per niente",
+    "2": "Non proprio io",
+    "3": "A volte",
+    "4": "Spesso io",
+    "5": "Proprio io"
   },
   "results": {
     "title": "Il tuo profilo di personalità",
