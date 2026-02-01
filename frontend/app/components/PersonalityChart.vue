@@ -10,14 +10,17 @@
   type ChartType = 'bar' | 'radar'
   const chartType = ref<ChartType>('bar')
 
+  // Vibrant trait colors - bold gradients for each personality trait
   const traits = computed(() => [
     {
       key: 'extraversion',
       name: t('traits.extraversion'),
       value: props.result.extraversion,
       icon: 'i-lucide-zap',
-      color: 'bg-yellow-500',
-      strokeColor: '#eab308',
+      color: 'bg-gradient-to-r from-rose-500 to-pink-500',
+      iconBg: 'bg-gradient-to-br from-rose-100 to-pink-200',
+      iconColor: 'text-rose-500',
+      strokeColor: '#f43f5e',
       description: t('traitDescriptions.extraversion')
     },
     {
@@ -25,8 +28,10 @@
       name: t('traits.agreeableness'),
       value: props.result.agreeableness,
       icon: 'i-lucide-heart-handshake',
-      color: 'bg-green-500',
-      strokeColor: '#22c55e',
+      color: 'bg-gradient-to-r from-emerald-500 to-teal-500',
+      iconBg: 'bg-gradient-to-br from-emerald-100 to-teal-200',
+      iconColor: 'text-emerald-500',
+      strokeColor: '#10b981',
       description: t('traitDescriptions.agreeableness')
     },
     {
@@ -34,8 +39,10 @@
       name: t('traits.conscientiousness'),
       value: props.result.conscientiousness,
       icon: 'i-lucide-target',
-      color: 'bg-blue-500',
-      strokeColor: '#3b82f6',
+      color: 'bg-gradient-to-r from-amber-500 to-orange-500',
+      iconBg: 'bg-gradient-to-br from-amber-100 to-orange-200',
+      iconColor: 'text-amber-500',
+      strokeColor: '#f59e0b',
       description: t('traitDescriptions.conscientiousness')
     },
     {
@@ -43,8 +50,10 @@
       name: t('traits.emotionalStability'),
       value: props.result.emotionalStability,
       icon: 'i-lucide-anchor',
-      color: 'bg-purple-500',
-      strokeColor: '#a855f7',
+      color: 'bg-gradient-to-r from-sky-500 to-blue-500',
+      iconBg: 'bg-gradient-to-br from-sky-100 to-blue-200',
+      iconColor: 'text-sky-500',
+      strokeColor: '#0ea5e9',
       description: t('traitDescriptions.emotionalStability')
     },
     {
@@ -52,8 +61,10 @@
       name: t('traits.openness'),
       value: props.result.openness,
       icon: 'i-lucide-lightbulb',
-      color: 'bg-pink-500',
-      strokeColor: '#ec4899',
+      color: 'bg-gradient-to-r from-violet-500 to-purple-500',
+      iconBg: 'bg-gradient-to-br from-violet-100 to-purple-200',
+      iconColor: 'text-violet-500',
+      strokeColor: '#8b5cf6',
       description: t('traitDescriptions.openness')
     }
   ])
@@ -154,13 +165,13 @@
   <div class="space-y-6">
     <!-- Chart Type Toggle -->
     <div class="flex justify-center">
-      <div class="inline-flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1">
+      <div class="inline-flex rounded-xl bg-slate-100 p-1.5 shadow-inner">
         <button
-          class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
           :class="
             chartType === 'bar'
-              ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg shadow-purple-500/30'
+              : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
           "
           @click="chartType = 'bar'"
         >
@@ -168,11 +179,11 @@
           {{ t('chart.bar') }}
         </button>
         <button
-          class="flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors"
+          class="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all"
           :class="
             chartType === 'radar'
-              ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow-sm'
-              : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+              ? 'bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg shadow-purple-500/30'
+              : 'text-slate-500 hover:text-slate-700 hover:bg-white/50'
           "
           @click="chartType = 'radar'"
         >
@@ -183,34 +194,36 @@
     </div>
 
     <!-- Bar Chart View -->
-    <div v-if="chartType === 'bar'" class="space-y-6">
-      <div v-for="trait in traits" :key="trait.key" class="space-y-2">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-2">
-            <UIcon :name="trait.icon" class="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            <span class="font-medium text-gray-900 dark:text-white">
-              {{ trait.name }}
-            </span>
+    <div v-if="chartType === 'bar'" class="space-y-5">
+      <div v-for="trait in traits" :key="trait.key" class="p-4 bg-white rounded-2xl shadow-md shadow-slate-100 border border-slate-100">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center shadow-sm" :class="trait.iconBg">
+              <UIcon :name="trait.icon" :class="['w-5 h-5', trait.iconColor]" />
+            </div>
+            <div>
+              <span class="font-bold text-slate-800 block">
+                {{ trait.name }}
+              </span>
+              <span class="text-xs text-slate-500">
+                {{ getLevel(trait.value) }}
+              </span>
+            </div>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="text-sm text-gray-500 dark:text-gray-400">
-              {{ getLevel(trait.value) }}
-            </span>
-            <span class="font-semibold text-gray-900 dark:text-white">
-              {{ trait.value }}%
-            </span>
+          <div class="text-2xl font-bold text-slate-800">
+            {{ trait.value }}%
           </div>
         </div>
 
-        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+        <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
           <div
-            class="h-full rounded-full transition-all duration-1000 ease-out"
+            class="h-full rounded-full transition-all duration-1000 ease-out shadow-sm"
             :class="trait.color"
             :style="{ width: `${trait.value}%` }"
           />
         </div>
 
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-slate-500 mt-3 leading-relaxed">
           {{ trait.description }}
         </p>
       </div>
@@ -241,15 +254,15 @@
         <!-- Data polygon with gradient fill -->
         <defs>
           <linearGradient id="radarGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" style="stop-color: #3b82f6; stop-opacity: 0.6" />
-            <stop offset="50%" style="stop-color: #a855f7; stop-opacity: 0.6" />
-            <stop offset="100%" style="stop-color: #ec4899; stop-opacity: 0.6" />
+            <stop offset="0%" style="stop-color: #6BB8E4; stop-opacity: 0.5" />
+            <stop offset="50%" style="stop-color: #4ABFBF; stop-opacity: 0.5" />
+            <stop offset="100%" style="stop-color: #A8E6CF; stop-opacity: 0.5" />
           </linearGradient>
         </defs>
         <polygon
           :points="dataPolygon"
           fill="url(#radarGradient)"
-          class="stroke-indigo-500 dark:stroke-indigo-400"
+          class="stroke-sky-500"
           stroke-width="2"
           stroke-linejoin="round"
         />
@@ -289,7 +302,7 @@
             dominant-baseline="middle"
             :class="[
               isSmallScreen ? 'text-xs' : 'text-sm',
-              hoveredTrait === trait.key ? 'fill-indigo-600 dark:fill-indigo-400' : 'fill-gray-700 dark:fill-gray-300'
+              hoveredTrait === trait.key ? 'fill-sky-600 dark:fill-sky-400' : 'fill-gray-700 dark:fill-gray-300'
             ]"
             class="font-medium transition-colors"
           >
@@ -302,7 +315,7 @@
             dominant-baseline="middle"
             :class="[
               isSmallScreen ? 'text-xs' : 'text-sm',
-              hoveredTrait === trait.key ? 'fill-indigo-700 dark:fill-indigo-300' : 'fill-gray-900 dark:fill-white'
+              hoveredTrait === trait.key ? 'fill-sky-700 dark:fill-sky-300' : 'fill-gray-900 dark:fill-white'
             ]"
             class="font-semibold transition-colors"
           >

@@ -28,54 +28,60 @@
 </script>
 
 <template>
-  <UCard class="w-full max-w-2xl">
-    <template #header>
-      <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">
-        {{ questionText }}
-      </h2>
-    </template>
+  <div class="w-full max-w-2xl">
+    <!-- Card with gradient border effect -->
+    <div class="relative p-[3px] rounded-3xl bg-gradient-to-r from-violet-500 via-purple-500 to-pink-500 shadow-xl shadow-purple-500/20">
+      <div class="bg-white rounded-[21px] p-6 sm:p-8">
+        <!-- Question text -->
+        <h2 class="text-lg sm:text-xl font-bold text-slate-800 leading-relaxed mb-6">
+          {{ questionText }}
+        </h2>
 
-    <div class="space-y-2 sm:space-y-3">
-      <button
-        v-for="option in options"
-        :key="option.value"
-        class="w-full p-3 sm:p-4 text-left rounded-lg border-2 transition-all duration-200"
-        :class="[
-          currentAnswer === option.value
-            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600',
-        ]"
-        @click="selectAnswer(option.value)"
-      >
-        <div class="flex items-center gap-2 sm:gap-3">
-          <div
-            class="w-5 h-5 sm:w-6 sm:h-6 rounded-full border-2 flex items-center justify-center shrink-0"
+        <!-- Answer options -->
+        <div class="space-y-3">
+          <button
+            v-for="(option, index) in options"
+            :key="option.value"
+            class="w-full p-4 text-left rounded-xl border-2 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md"
             :class="[
               currentAnswer === option.value
-                ? 'border-primary-500 bg-primary-500'
-                : 'border-gray-300 dark:border-gray-600',
+                ? 'border-transparent bg-gradient-to-r from-violet-500 to-purple-500 text-white shadow-lg shadow-purple-500/30'
+                : 'border-slate-200 bg-white hover:border-purple-300 hover:bg-purple-50',
             ]"
+            @click="selectAnswer(option.value)"
           >
-            <UIcon
-              v-if="currentAnswer === option.value"
-              name="i-lucide-check"
-              class="w-3 h-3 sm:w-4 sm:h-4 text-white"
-            />
-          </div>
-          <span
-            class="text-sm sm:text-base text-gray-700 dark:text-gray-300"
-            :class="{ 'font-medium': currentAnswer === option.value }"
-          >
-            {{ option.label }}
-          </span>
+            <div class="flex items-center gap-4">
+              <div
+                class="w-8 h-8 rounded-full flex items-center justify-center shrink-0 font-bold text-sm transition-all"
+                :class="[
+                  currentAnswer === option.value
+                    ? 'bg-white/20 text-white'
+                    : 'bg-gradient-to-br from-slate-100 to-slate-200 text-slate-500',
+                ]"
+              >
+                {{ index + 1 }}
+              </div>
+              <span
+                class="text-base"
+                :class="currentAnswer === option.value ? 'font-semibold text-white' : 'text-slate-700'"
+              >
+                {{ option.label }}
+              </span>
+              <UIcon
+                v-if="currentAnswer === option.value"
+                name="i-lucide-check-circle"
+                class="w-5 h-5 text-white ml-auto"
+              />
+            </div>
+          </button>
         </div>
-      </button>
-    </div>
 
-    <template #footer>
-      <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 text-center">
-        {{ t('questionnaire.selectOption') }}
-      </p>
-    </template>
-  </UCard>
+        <!-- Footer hint -->
+        <p class="text-sm text-slate-400 text-center mt-6 flex items-center justify-center gap-2">
+          <UIcon name="i-lucide-mouse-pointer-click" class="w-4 h-4" />
+          {{ t('questionnaire.selectOption') }}
+        </p>
+      </div>
+    </div>
+  </div>
 </template>

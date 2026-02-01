@@ -2,17 +2,69 @@
 @import "@nuxt/ui";
 
 @theme static {
-  --font-sans: 'Public Sans', sans-serif;
+  /* Typography - Friendly, rounded fonts */
+  --font-sans: 'Nunito', 'Inter', 'Segoe UI', sans-serif;
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+  /* Primary Colors - Sky Blue palette (trust, calm, approachable) */
+  --color-sky-50: #F0F9FF;
+  --color-sky-100: #E0F2FE;
+  --color-sky-200: #BAE6FD;
+  --color-sky-300: #7DD3FC;
+  --color-sky-400: #6BB8E4;
+  --color-sky-500: #5AA8D4;
+  --color-sky-600: #4A98C4;
+  --color-sky-700: #2D5A7B;
+  --color-sky-800: #1E4A6A;
+  --color-sky-900: #0F3A5A;
+  --color-sky-950: #082A42;
+
+  /* Secondary - Ocean Teal */
+  --color-teal-400: #4ABFBF;
+  --color-teal-500: #3AAFAF;
+  --color-teal-600: #2A9F9F;
+
+  /* Warm Pastels - Friendly accents */
+  --color-peach-100: #FFF0E5;
+  --color-peach-200: #FFDAB3;
+  --color-peach-300: #FFCBA4;
+
+  --color-coral-100: #FFE5E0;
+  --color-coral-200: #FFB5A7;
+  --color-coral-300: #FFA599;
+
+  --color-sunny-100: #FFF9E5;
+  --color-sunny-200: #FFE5A0;
+  --color-sunny-300: #FFD970;
+
+  /* Accent Colors - For personality traits */
+  --color-mint: #A8E6CF;
+  --color-lavender: #D4B5FF;
+  --color-rose: #FFB8D0;
+  --color-soft-orange: #FFCBA4;
+  --color-cool-gray: #B8C5D6;
+
+  /* Neutral Colors - Soft, inviting */
+  --color-cloud: #F8FAFC;
+  --color-charcoal: #1E293B;
+}
+
+/* Shimmer animation for progress bar */
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

@@ -8,6 +8,11 @@ export default defineNuxtConfig({
 
   css: ['~/assets/css/main.css'],
 
+  // Default to light mode for friendly, youth-oriented design
+  colorMode: {
+    preference: 'light'
+  },
+
   routeRules: {
     '/': { prerender: true }
   },

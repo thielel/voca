@@ -132,9 +132,9 @@ const getLevelLabel = (value: number) => {
 
 const getLevelColor = (value: number) => {
   const level = getLevel(value)
-  if (level === 'high') return 'text-green-600 dark:text-green-400'
-  if (level === 'medium') return 'text-yellow-600 dark:text-yellow-400'
-  return 'text-red-600 dark:text-red-400'
+  if (level === 'high') return 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-900/30'
+  if (level === 'medium') return 'text-sky-600 dark:text-sky-400 bg-sky-50 dark:bg-sky-900/30'
+  return 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/30'
 }
 
 // Trait metadata (icon only, names come from i18n)
@@ -192,18 +192,22 @@ const formatInterpretation = (text: string | null): string => {
 </script>
 
 <template>
-  <div class="min-h-screen py-8 px-4">
-    <div class="max-w-4xl mx-auto">
-      <!-- Header -->
-      <div class="mb-6 sm:mb-8 text-center">
-        <UIcon
-          name="i-lucide-sparkles"
-          class="w-10 h-10 sm:w-12 sm:h-12 mx-auto text-primary-500 mb-4"
-        />
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">
+  <div class="min-h-screen py-8 px-4 relative">
+    <div class="relative max-w-4xl mx-auto">
+      <!-- Header - celebratory -->
+      <div class="mb-8 sm:mb-10 text-center">
+        <div class="relative inline-block">
+          <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 rounded-3xl bg-gradient-to-br from-emerald-400 via-teal-500 to-cyan-500 flex items-center justify-center shadow-xl shadow-teal-500/30">
+            <UIcon
+              name="i-lucide-trophy"
+              class="w-10 h-10 sm:w-12 sm:h-12 text-white"
+            />
+          </div>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-transparent bg-clip-text">
           {{ t('results.title') }}
         </h1>
-        <p class="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-400">
+        <p class="mt-3 text-base sm:text-lg text-slate-600 max-w-md mx-auto">
           {{ t('results.subtitle') }}
         </p>
       </div>
@@ -321,12 +325,12 @@ const formatInterpretation = (text: string | null): string => {
                 </div>
                 <div class="flex items-center gap-2 ml-7 sm:ml-0">
                   <span
-                    class="text-xs sm:text-sm font-medium px-2 py-1 rounded"
+                    class="text-xs sm:text-sm font-medium px-2.5 py-1 rounded-lg"
                     :class="getLevelColor(trait.value)"
                   >
                     {{ getLevelLabel(trait.value) }}
                   </span>
-                  <span class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">
+                  <span class="text-lg sm:text-xl font-bold text-slate-800 dark:text-white">
                     {{ Math.round(trait.value) }}%
                   </span>
                 </div>
@@ -340,26 +344,38 @@ const formatInterpretation = (text: string | null): string => {
           </div>
         </UCard>
 
-        <!-- Disclaimer -->
-        <div class="mt-6 p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-          <div class="flex gap-3">
-            <UIcon name="i-lucide-info" class="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-            <p class="text-sm text-amber-700 dark:text-amber-300">
-              <strong>{{ t('results.remember') }}</strong> {{ t('results.disclaimer') }}
+        <!-- Disclaimer - friendly, encouraging tone -->
+        <div class="mt-6 p-5 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200/50 shadow-lg shadow-amber-100/50">
+          <div class="flex gap-4">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-400 flex items-center justify-center shrink-0 shadow-md">
+              <UIcon name="i-lucide-heart" class="w-5 h-5 text-white" />
+            </div>
+            <p class="text-sm text-amber-800">
+              <strong class="text-amber-900">{{ t('results.remember') }}</strong> {{ t('results.disclaimer') }}
             </p>
           </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-8">
-          <UButton variant="outline" @click="startOver">
-            <UIcon name="i-lucide-refresh-cw" class="w-4 h-4 mr-2" />
-            {{ t('results.retake') }}
-          </UButton>
-          <UButton :to="localePath('/')">
-            <UIcon name="i-lucide-home" class="w-4 h-4 mr-2" />
-            {{ t('results.home') }}
-          </UButton>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mt-10">
+          <button 
+            class="px-6 py-3 font-semibold text-slate-700 bg-white border-2 border-slate-200 rounded-xl hover:border-violet-300 hover:bg-violet-50 transition-all shadow-md hover:shadow-lg"
+            @click="startOver"
+          >
+            <span class="flex items-center justify-center gap-2">
+              <UIcon name="i-lucide-refresh-cw" class="w-5 h-5" />
+              {{ t('results.retake') }}
+            </span>
+          </button>
+          <NuxtLink 
+            :to="localePath('/')"
+            class="px-6 py-3 font-semibold text-white bg-gradient-to-r from-violet-500 to-purple-600 rounded-xl hover:from-violet-600 hover:to-purple-700 transition-all shadow-lg shadow-purple-500/30 hover:shadow-xl hover:shadow-purple-500/40"
+          >
+            <span class="flex items-center justify-center gap-2">
+              <UIcon name="i-lucide-home" class="w-5 h-5" />
+              {{ t('results.home') }}
+            </span>
+          </NuxtLink>
         </div>
       </template>
     </div>

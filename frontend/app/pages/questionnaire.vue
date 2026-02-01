@@ -23,8 +23,8 @@
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center px-3 sm:px-4 py-6 sm:py-8">
-    <div class="w-full max-w-2xl space-y-6 sm:space-y-8">
+  <div class="min-h-screen flex flex-col items-center justify-center px-3 sm:px-4 py-6 sm:py-8 relative">
+    <div class="relative w-full max-w-2xl space-y-6 sm:space-y-8">
       <ProgressBar
         :progress="progress"
         :current-question="currentQuestionIndex + 1"
